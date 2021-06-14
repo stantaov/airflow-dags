@@ -7,7 +7,6 @@ import time
 import logging
 import airflow
 from airflow import DAG
-import utils.emr_utils as emr
 from datetime import timedelta
 from airflow.models import Variable
 from airflow import AirflowException
