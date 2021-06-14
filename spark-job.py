@@ -258,13 +258,13 @@ DEFAULT_ARGS = {
 # ]
 
 
-# # Creating DAG workflow 
-# dag = DAG(
-#     'emr_spark_job',
-#     default_args=DEFAULT_ARGS,
-#     dagrun_timeout=timedelta(hours=2),
-#     tags=['emr']
-# )
+# Creating DAG workflow 
+dag = DAG(
+    'emr_spark_job',
+    default_args=DEFAULT_ARGS,
+    dagrun_timeout=timedelta(hours=2),
+    tags=['emr']
+)
 
 # create_cluster = PythonOperator(
 #     task_id='create_cluster',
