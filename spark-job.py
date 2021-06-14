@@ -74,24 +74,24 @@ DEFAULT_ARGS = {
     'provide_context': True
 }
 
-# # Checks if the EMR cluster is up and running
-# class ClusterCheckSensor(BaseSensorOperator):
-#     @apply_defaults
-#     def __init__(self, *args, **kwargs):
-#         return super(ClusterCheckSensor, self).__init__(*args, **kwargs)
-#     # poke function will be called and checks that the clsuter status is WAITING
-#     def poke(self, context):
-#         try:
-#             cluster_id = Variable.get("cluster_id")
-#             status = get_cluster_status(emr, cluster_id)
-#             logging.info(status)
-#             if status == 'WAITING':
-#                 return True
-#             else:
-#                 return False
-#         except Exception as e:
-#             logging.info(e)
-#             return False
+# Checks if the EMR cluster is up and running
+class ClusterCheckSensor(BaseSensorOperator):
+    @apply_defaults
+    def __init__(self, *args, **kwargs):
+        return super(ClusterCheckSensor, self).__init__(*args, **kwargs)
+    # poke function will be called and checks that the clsuter status is WAITING
+    def poke(self, context):
+        try:
+            cluster_id = Variable.get("cluster_id")
+            status = get_cluster_status(emr, cluster_id)
+            logging.info(status)
+            if status == 'WAITING':
+                return True
+            else:
+                return False
+        except Exception as e:
+            logging.info(e)
+            return False
 
 
 # # Retrives an instance region to use it later for creating boto3 clients
