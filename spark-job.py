@@ -266,69 +266,69 @@ dag = DAG(
     tags=['emr']
 )
 
-# create_cluster = PythonOperator(
-#     task_id='create_cluster',
-#     python_callable=create_emr,
-#     dag=dag)
+create_cluster = PythonOperator(
+    task_id='create_cluster',
+    python_callable=create_emr,
+    dag=dag)
 
-# emr_cluster_check = ClusterCheckSensor(
-#     task_id='cluster_check', 
-#     poke_interval=60, 
-#     dag=dag)
+emr_cluster_check = ClusterCheckSensor(
+    task_id='cluster_check', 
+    poke_interval=60, 
+    dag=dag)
 
-# parse_request = PythonOperator(
-#     task_id='parse_request',
-#     provide_context=True,
-#     python_callable=retrieve_s3_file,
-#     dag=dag
-# )
+parse_request = PythonOperator(
+    task_id='parse_request',
+    provide_context=True,
+    python_callable=retrieve_s3_file,
+    dag=dag
+)
 
-# step_adder = EmrAddStepsOperator(
-#     task_id='add_steps',
-#     job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
-#     aws_conn_id='aws_default',
-#     steps=SPARK_STEPS,
-#     dag=dag
-# )
+step_adder = EmrAddStepsOperator(
+    task_id='add_steps',
+    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
+    aws_conn_id='aws_default',
+    steps=SPARK_STEPS,
+    dag=dag
+)
 
-# step_checker = EmrStepSensor(
-#     task_id='watch_step',
-#     job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
-#     step_id="{{ task_instance.xcom_pull('add_steps', key='return_value')[0] }}",
-#     aws_conn_id='aws_default',
-#     dag=dag
-# )
+step_checker = EmrStepSensor(
+    task_id='watch_step',
+    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
+    step_id="{{ task_instance.xcom_pull('add_steps', key='return_value')[0] }}",
+    aws_conn_id='aws_default',
+    dag=dag
+)
 
-# crawler = PythonOperator(
-#     task_id = 'glue_crawler',
-#     python_callable=cwarler_run,
-#     dag=dag
-# )
+crawler = PythonOperator(
+    task_id = 'glue_crawler',
+    python_callable=cwarler_run,
+    dag=dag
+)
 
-# repair = PythonOperator(
-#     task_id = 'rapair_athena_table',
-#     python_callable=reapir_table,
-#     dag=dag
-# )
+repair = PythonOperator(
+    task_id = 'rapair_athena_table',
+    python_callable=reapir_table,
+    dag=dag
+)
 
-# job_complete = PythonOperator(
-#     task_id = "ETL_job_complete",
-#     python_callable=dag_done,
-#     dag=dag
-# )
+job_complete = PythonOperator(
+    task_id = "ETL_job_complete",
+    python_callable=dag_done,
+    dag=dag
+)
 
-# terminate_cluster = PythonOperator(
-#     task_id='terminate_cluster',
-#     python_callable=terminate_emr,
-#     trigger_rule='all_success', # make sure that all tasks were completed successfully
-#     dag=dag)
+terminate_cluster = PythonOperator(
+    task_id='terminate_cluster',
+    python_callable=terminate_emr,
+    trigger_rule='all_success', # make sure that all tasks were completed successfully
+    dag=dag)
 
-# # Setting the Airflow workflow
-# parse_request >> create_cluster
-# create_cluster >> emr_cluster_check
-# emr_cluster_check >> step_adder
-# step_adder >> step_checker
-# step_checker >> crawler
-# crawler >> repair
-# repair >> job_complete
-# job_complete >> terminate_cluster
+# Setting the Airflow workflow
+parse_request >> create_cluster
+create_cluster >> emr_cluster_check
+emr_cluster_check >> step_adder
+step_adder >> step_checker
+step_checker >> crawler
+crawler >> repair
+repair >> job_complete
+job_complete >> terminate_cluster
