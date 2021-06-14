@@ -222,40 +222,40 @@ region = get_region()
 cluster = emr_clent(region_name=region)
 # extension = file_extension_checker()
 
-# SPARK_STEPS = [
-#     {
-#         'Name': 'spark-job',
-#         'ActionOnFailure': 'CONTINUE',
-#         'HadoopJarStep': {
-#             'Jar': 'command-runner.jar',
-#             'Args': [
-#                 '/usr/bin/spark-submit', 
-#                 '--class', 'Driver.MainApp',
-#                 '--master', 'yarn',
-#                 '--deploy-mode','cluster',
-#                 '--num-executors','2',
-#                 '--driver-memory','1g',
-#                 '--executor-memory','3g',
-#                 '--executor-cores','2',
-#                 '--conf', 'spark.shuffle.service.enabled=true',
-#                 '--conf', 'spark.dynamicAllocation.enabled=true',
-#                 '--conf', 'spark.dynamicAllocation.minExecutors=2',
-#                 '--conf', 'spark.dynamicAllocation.maxExecutors=10',
-#                 '--conf', 'spark.dynamicAllocation.initialExecutors=2',
-#                 's3a://midterm-project-wcd/spark-job/wcd_final_project_2.11-0.1.jar',
-#                 '-p','midterm-project',
-#                 '-i','extension', 
-#                 '-o','parquet',
-#                 #'-s','s3a://midterm-project-wcd/input_data/banking.csv',
-#                 '-s', "{{ task_instance.xcom_pull('parse_request', key='s3_location') }}",
-#                 '-d','s3a://midterm-project-wcd/output_data/',
-#                 '-c','job', # come up with a solution to pick partition automatically
-#                 '-m','append',
-#                 '--input-options','header=true'
-#             ]
-#         }
-#     }
-# ]
+SPARK_STEPS = [
+    {
+        'Name': 'spark-job',
+        'ActionOnFailure': 'CONTINUE',
+        'HadoopJarStep': {
+            'Jar': 'command-runner.jar',
+            'Args': [
+                '/usr/bin/spark-submit', 
+                '--class', 'Driver.MainApp',
+                '--master', 'yarn',
+                '--deploy-mode','cluster',
+                '--num-executors','2',
+                '--driver-memory','1g',
+                '--executor-memory','3g',
+                '--executor-cores','2',
+                '--conf', 'spark.shuffle.service.enabled=true',
+                '--conf', 'spark.dynamicAllocation.enabled=true',
+                '--conf', 'spark.dynamicAllocation.minExecutors=2',
+                '--conf', 'spark.dynamicAllocation.maxExecutors=10',
+                '--conf', 'spark.dynamicAllocation.initialExecutors=2',
+                's3a://midterm-project-wcd/spark-job/wcd_final_project_2.11-0.1.jar',
+                '-p','midterm-project',
+                '-i','extension', 
+                '-o','parquet',
+                #'-s','s3a://midterm-project-wcd/input_data/banking.csv',
+                '-s', "{{ task_instance.xcom_pull('parse_request', key='s3_location') }}",
+                '-d','s3a://midterm-project-wcd/output_data/',
+                '-c','job', # come up with a solution to pick partition automatically
+                '-m','append',
+                '--input-options','header=true'
+            ]
+        }
+    }
+]
 
 
 # Creating DAG workflow 
