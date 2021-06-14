@@ -94,16 +94,16 @@ class ClusterCheckSensor(BaseSensorOperator):
             return False
 
 
-# # Retrives an instance region to use it later for creating boto3 clients
-# def get_region():
-#     instance_info = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document")
-#     instance_info_dict = instance_info.json()
-#     return instance_info_dict.get('region') 
+# Retrives an instance region to use it later for creating boto3 clients
+def get_region():
+    instance_info = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document")
+    instance_info_dict = instance_info.json()
+    return instance_info_dict.get('region') 
 
-# # Creates a boto3 ERM client 
-# def emr_clent(region_name):
-#     global emr
-#     emr = boto3.client('emr', region_name=region_name)
+# Creates a boto3 ERM client 
+def emr_clent(region_name):
+    global emr
+    emr = boto3.client('emr', region_name=region_name)
 
 # # Creates an EMR cluster
 # def create_cluster(region_name, cluster_name='Spark-Cluster'):
