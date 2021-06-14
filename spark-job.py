@@ -156,14 +156,14 @@ def create_cluster(region_name, cluster_name='Spark-Cluster'):
     )
     return cluster['JobFlowId']
 
-# # Gets the EMR current cluster status
-# def get_cluster_status(cluster_id):
-#     response = emr.describe_cluster(ClusterId=cluster_id)
-#     return response['Cluster']['Status']['State']
+# Gets the EMR current cluster status
+def get_cluster_status(cluster_id):
+    response = emr.describe_cluster(ClusterId=cluster_id)
+    return response['Cluster']['Status']['State']
 
-# # Terminates the EMR cluster
-# def terminate_cluster(cluster_id):
-#     emr.terminate_job_flows(JobFlowIds=[cluster_id])
+# Terminates the EMR cluster
+def terminate_cluster(cluster_id):
+    emr.terminate_job_flows(JobFlowIds=[cluster_id])
 
 
 # # Tetrives location of the uploaded file on S3
