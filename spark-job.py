@@ -11,11 +11,14 @@ from datetime import timedelta
 from airflow.models import Variable
 from airflow import AirflowException
 from airflow.contrib.operators.emr_create_job_flow_operator import EmrCreateJobFlowOperator
+from airflow.models import BaseOperator
+from airflow.operators.sensors import BaseSensorOperator
+from airflow.plugins_manager import AirflowPlugin
+from airflow.utils.decorators import apply_defaults
 from airflow.contrib.operators.emr_add_steps_operator import EmrAddStepsOperator
 from airflow.contrib.sensors.emr_step_sensor import EmrStepSensor
 from airflow.contrib.operators.emr_terminate_job_flow_operator import EmrTerminateJobFlowOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
-from airflow.operators.custom_plugin import ClusterCheckSensor
 
 
 DEFAULT_ARGS = {
@@ -27,6 +30,25 @@ DEFAULT_ARGS = {
     'email_on_retry': False,
     'provide_context': True
 }
+
+# Checks if the EMR cluster is up and running
+class ClusterCheckSensor(BaseSensorOperator):
+    @apply_defaults
+    def __init__(self, *args, **kwargs):
+        return super(ClusterCheckSensor, self).__init__(*args, **kwargs)
+    # poke function will be called and checks that the clsuter status is WAITING
+    def poke(self, context):
+        try:
+            cluster_id = Variable.get("cluster_id")
+            status = get_cluster_status(emr, cluster_id)
+            logging.info(status)
+            if status == 'WAITING':
+                return True
+            else:
+                return False
+        except Exception as e:
+            logging.info(e)
+            return False
 
 
 # Retrives an instance region to use it later for creating boto3 clients
