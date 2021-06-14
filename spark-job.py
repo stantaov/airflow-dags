@@ -190,23 +190,23 @@ def terminate_emr(**kwargs):
 def dag_done(**kwargs):
     Variable.set("dag_emr_job", "done")
 
-# # Runs predefined Glue crawler 
-# def cwarler_run(**kwargs):
-#     client = boto3.client('glue', region_name=region)
-#     response = client.start_crawler(
-#     Name='data_enginnering_midterm_project'
-#     )
+# Runs predefined Glue crawler 
+def cwarler_run(**kwargs):
+    client = boto3.client('glue', region_name=region)
+    response = client.start_crawler(
+    Name='data_enginnering_midterm_project'
+    )
 
-# # Repairs Athena partitions
-# def reapir_table(**kwargs):
-#     client = boto3.client('athena', region_name=region)
-#     queryStart = client.start_query_execution(
-#         QueryString = "MSCK REPAIR TABLE output",
-#         QueryExecutionContext = {
-#         'Database': 'data_enginnering_midterm_project'
-#         }, 
-#         ResultConfiguration = { 'OutputLocation': 's3://midterm-project-wcd/output_data/'}
-#     )
+# Repairs Athena partitions
+def reapir_table(**kwargs):
+    client = boto3.client('athena', region_name=region)
+    queryStart = client.start_query_execution(
+        QueryString = "MSCK REPAIR TABLE output",
+        QueryExecutionContext = {
+        'Database': 'data_enginnering_midterm_project'
+        }, 
+        ResultConfiguration = { 'OutputLocation': 's3://midterm-project-wcd/output_data/'}
+    )
 
 # def file_extension_checker():
 #     s3 = boto3.resource('s3')
@@ -218,8 +218,8 @@ def dag_done(**kwargs):
 #             return file.key[-3:].capitalize()
 
 
-# region = get_region()
-# cluster = emr_clent(region_name=region)
+region = get_region()
+cluster = emr_clent(region_name=region)
 # extension = file_extension_checker()
 
 # SPARK_STEPS = [
