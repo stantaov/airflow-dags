@@ -166,10 +166,10 @@ def terminate_cluster(cluster_id):
     emr.terminate_job_flows(JobFlowIds=[cluster_id])
 
 
-# # Tetrives location of the uploaded file on S3
-# def retrieve_s3_file(**kwargs):
-#     s3_location = kwargs['dag_run'].conf['s3_location']
-#     kwargs['ti'].xcom_push(key = 's3_location', value = s3_location)
+# Tetrives location of the uploaded file on S3
+def retrieve_s3_file(**kwargs):
+    s3_location = kwargs['dag_run'].conf['s3_location']
+    kwargs['ti'].xcom_push(key = 's3_location', value = s3_location)
 
 
 # # Creates an EMR cluster
