@@ -166,29 +166,29 @@ def terminate_cluster(cluster_id):
     emr.terminate_job_flows(JobFlowIds=[cluster_id])
 
 
-# Tetrives location of the uploaded file on S3
+# Retrives location of the uploaded file on S3
 def retrieve_s3_file(**kwargs):
     s3_location = kwargs['dag_run'].conf['s3_location']
     kwargs['ti'].xcom_push(key = 's3_location', value = s3_location)
 
 
-# # Creates an EMR cluster
-# def create_emr(**kwargs):
-#     cluster_id = emr.create_cluster(region_name=region)
-#     Variable.set("cluster_id", cluster_id)
-#     return cluster_id
+# Creates an EMR cluster
+def create_emr(**kwargs):
+    cluster_id = create_cluster(region_name=region)
+    Variable.set("cluster_id", cluster_id)
+    return cluster_id
 
-# # Terminates the EMR cluster
-# def terminate_emr(**kwargs):
-#     ti = kwargs['ti']
-#     cluster_id = ti.xcom_pull(task_ids='create_cluster')
-#     emr.terminate_cluster(cluster_id)
-#     # Sets Airflow Variable key for cluster_id to na
-#     Variable.set("cluster_id", "na")
+# Terminates the EMR cluster
+def terminate_emr(**kwargs):
+    ti = kwargs['ti']
+    cluster_id = ti.xcom_pull(task_ids='create_cluster')
+    terminate_cluster(cluster_id)
+    # Sets Airflow Variable key for cluster_id to na
+    Variable.set("cluster_id", "na")
 
-# # ELT job complete pointer
-# def dag_done(**kwargs):
-#     Variable.set("dag_emr_job", "done")
+# ELT job complete pointer
+def dag_done(**kwargs):
+    Variable.set("dag_emr_job", "done")
 
 # # Runs predefined Glue crawler 
 # def cwarler_run(**kwargs):
