@@ -149,7 +149,7 @@ def create_emr(**kwargs):
 # Terminates the EMR cluster
 def terminate_emr(**kwargs):
     ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
+    cluster_id = ti.xcom_pull(task_ids='create_emr')
     terminate_cluster(cluster_id)
     # Sets Airflow Variable key for cluster_id to na
     Variable.set("cluster_id", "na")
