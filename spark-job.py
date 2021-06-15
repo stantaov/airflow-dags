@@ -233,7 +233,7 @@ dag = DAG(
     tags=['emr']
 )
 
-create_cluster = PythonOperator(
+create_EMR_cluster = PythonOperator(
     task_id='create_emr',
     python_callable=create_emr,
     dag=dag)
@@ -291,8 +291,8 @@ terminate_cluster = PythonOperator(
     dag=dag)
 
 # Setting the Airflow workflow
-parse_request >> create_cluster
-create_cluster >> emr_cluster_check
+parse_request >> create_EMR_cluster
+create_EMR_cluster >> emr_cluster_check
 emr_cluster_check >> step_adder
 step_adder >> step_checker
 step_checker >> crawler
