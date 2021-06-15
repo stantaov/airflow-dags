@@ -76,7 +76,7 @@ emr = client(region)
 def create_cluster(region_name, cluster_name='Spark-Cluster'):
     cluster = emr.run_job_flow(
         Name=cluster_name,
-        ReleaseLabel='emr-5.33.0',
+        ReleaseLabel='emr-6.3.0',
         LogUri='s3://midterm-project-wcd/emr-logs/',
         Instances={
             'InstanceGroups': [
