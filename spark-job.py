@@ -60,6 +60,10 @@ def get_region():
 def client(region_name):
     return boto3.client('emr', region_name=region_name)
 
+def emr_clent(region_name):
+    global emr
+    emr = boto3.client('emr', region_name=region_name)
+
 def get_cluster_status(emr, cluster_id):
     response = emr.describe_cluster(ClusterId=cluster_id)
     return response['Cluster']['Status']['State']
