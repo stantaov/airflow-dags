@@ -252,7 +252,7 @@ parse_request = PythonOperator(
 
 step_adder = EmrAddStepsOperator(
     task_id='add_steps',
-    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
+    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_emr', key='return_value') }}",
     aws_conn_id='aws_default',
     steps=SPARK_STEPS,
     dag=dag
@@ -260,7 +260,7 @@ step_adder = EmrAddStepsOperator(
 
 step_checker = EmrStepSensor(
     task_id='watch_step',
-    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_cluster', key='return_value') }}",
+    job_flow_id="{{ task_instance.xcom_pull(task_ids='create_emr', key='return_value') }}",
     step_id="{{ task_instance.xcom_pull('add_steps', key='return_value')[0] }}",
     aws_conn_id='aws_default',
     dag=dag
