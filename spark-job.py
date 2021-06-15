@@ -39,7 +39,7 @@ class ClusterCheckSensor(BaseSensorOperator):
     def poke(self, context):
         try:
             cluster_id = Variable.get("cluster_id")
-            status = get_cluster_status(emr, cluster_id)
+            status = get_cluster_status(cluster_id)
             logging.info(status)
             if status == 'WAITING':
                 return True
