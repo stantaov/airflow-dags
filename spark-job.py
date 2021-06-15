@@ -77,6 +77,7 @@ def create_cluster(region_name, cluster_name='Spark-Cluster'):
     cluster = emr.run_job_flow(
         Name=cluster_name,
         ReleaseLabel='emr-5.33.0',
+        LogUri='s3://midterm-project-wcd/emr-logs/',
         Instances={
             'InstanceGroups': [
                 {
@@ -168,21 +169,22 @@ def cwarler_run(**kwargs):
 def reapir_table(**kwargs):
     client = boto3.client('athena', region_name=region)
     queryStart = client.start_query_execution(
-        QueryString = "MSCK REPAIR TABLE output",
+        QueryString = "MSCK REPAIR TABLE " + str(Variable.get("file_name")),
         QueryExecutionContext = {
         'Database': 'data_enginnering_midterm_project'
         }, 
         ResultConfiguration = { 'OutputLocation': 's3://midterm-project-wcd/output_data/'}
     )
 
-# def file_extension_checker():
-#     s3 = boto3.resource('s3')
-#     bucket = s3.Bucket('midterm-project-wcd')
-#     files = bucket.objects.all()
-#     extensions = ['csv', 'json']
-#     for file in files:
-#         if file.key[-3:] in extensions:
-#             return file.key[-3:].capitalize()
+# Retrives filename and file extension of the uploaded file
+def file_extension_checker(**kwargs):
+    s3_location = kwargs['dag_run'].conf['s3_location']
+    base=os.path.basename(s3_location)
+    file_name, extension = os.path.splitext(base)
+    extension = extension[1:]
+    Variable.set("extension", extension.capitalize())
+    Variable.set("file_name", file_name)
+    return extension.capitalize()
 
 
 region = get_region()
@@ -209,16 +211,16 @@ SPARK_STEPS = [
                 '--conf', 'spark.dynamicAllocation.minExecutors=2',
                 '--conf', 'spark.dynamicAllocation.maxExecutors=10',
                 '--conf', 'spark.dynamicAllocation.initialExecutors=2',
-                's3a://midterm-project-wcd/spark-job/wcd_final_project_2.11-0.1.jar',
+                's3a://midterm-project-wcd/spark-job/spark-engine_2.12-0.0.1-spark3.jar',
                 '-p','midterm-project',
-                '-i','extension', 
+                '-i', str(Variable.get("extension", default_var=0)), 
                 '-o','parquet',
                 #'-s','s3a://midterm-project-wcd/input_data/banking.csv',
                 '-s', "{{ task_instance.xcom_pull('parse_request', key='s3_location') }}",
-                '-d','s3a://midterm-project-wcd/output_data/',
+                '-d','s3a://midterm-project-wcd/output_data/' + str(Variable.get("file_name", default_var=0)) + '/',
                 '-c','job', # come up with a solution to pick partition automatically
                 '-m','append',
-                '--input-options','header=true'
+                '--input-options','header=true, inferSchema=true' # header=true, inferSchema=true
             ]
         }
     }
@@ -232,6 +234,12 @@ dag = DAG(
     dagrun_timeout=timedelta(hours=2),
     tags=['emr']
 )
+
+get_extension = PythonOperator(
+    task_id='get_extension',
+    python_callable=file_extension_checker,
+    dag=dag)
+
 
 create_EMR_cluster = PythonOperator(
     task_id='create_emr',
@@ -291,6 +299,7 @@ terminate_cluster = PythonOperator(
     dag=dag)
 
 # Setting the Airflow workflow
+get_extension >> parse_request
 parse_request >> create_EMR_cluster
 create_EMR_cluster >> emr_cluster_check
 emr_cluster_check >> step_adder
