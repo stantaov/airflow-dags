@@ -234,7 +234,7 @@ dag = DAG(
 )
 
 create_cluster = PythonOperator(
-    task_id='create_cluster',
+    task_id='create_emr',
     python_callable=create_emr,
     dag=dag)
 
