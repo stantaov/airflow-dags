@@ -292,7 +292,7 @@ job_complete = PythonOperator(
     dag=dag
 )
 
-terminate_cluster = PythonOperator(
+remove_cluster = PythonOperator(
     task_id='terminate_cluster',
     python_callable=terminate_emr,
     trigger_rule='all_success', # make sure that all tasks were completed successfully
@@ -307,4 +307,4 @@ step_adder >> step_checker
 step_checker >> crawler
 crawler >> repair
 repair >> job_complete
-job_complete >> terminate_cluster
+job_complete >> remove_cluster
