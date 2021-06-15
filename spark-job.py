@@ -57,9 +57,16 @@ def get_region():
     return instance_info_dict.get('region') 
 
 # Creates a boto3 ERM client 
-def emr_clent(region_name):
-    global emr
-    emr = boto3.client('emr', region_name=region_name)
+def client(region_name):
+    return boto3.client('emr', region_name=region_name)
+
+def get_cluster_status(emr, cluster_id):
+    response = emr.describe_cluster(ClusterId=cluster_id)
+    return response['Cluster']['Status']['State']
+
+region = get_region()
+emr = client(region)
+
 
 # Creates an EMR cluster
 def create_cluster(region_name, cluster_name='Spark-Cluster'):
